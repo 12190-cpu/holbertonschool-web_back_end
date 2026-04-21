@@ -1,41 +1,30 @@
 #!/usr/bin/env python3
-"""
-Module that implements hypermedia pagination on a CSV dataset.
-"""
+"""Module that implements hypermedia pagination on a CSV dataset."""
 
 
 import csv
 import math
-from typing import List, Tuple, Dict
+from typing import Any, Dict, List, Tuple
 
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """
-    Return a tuple containing the start index and end index for pagination.
-
-    The page numbering is 1-indexed, meaning that page 1 starts at index 0.
-    """
+    """Return the start and end indexes for a pagination request."""
     start_index = (page - 1) * page_size
     end_index = start_index + page_size
     return (start_index, end_index)
 
 
 class Server:
-    """
-    Server class to paginate a database of popular baby names.
-    """
+    """Server class to paginate a database of popular baby names."""
+
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self) -> None:
-        """
-        Initialize a Server instance.
-        """
+        """Initialize the Server instance."""
         self.__dataset = None
 
     def dataset(self) -> List[List]:
-        """
-        Load and cache the dataset from the CSV file.
-        """
+        """Load and cache dataset from the CSV file."""
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
@@ -44,9 +33,7 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """
-        Return the requested page of the dataset.
-        """
+        """Return the requested page of the dataset."""
         assert isinstance(page, int) and page > 0
         assert isinstance(page_size, int) and page_size > 0
 
@@ -58,10 +45,8 @@ class Server:
 
         return dataset[start_index:end_index]
 
-    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
-        """
-        Return a dictionary containing hypermedia pagination information.
-        """
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+        """Return hypermedia pagination information."""
         data = self.get_page(page, page_size)
         total_pages = math.ceil(len(self.dataset()) / page_size)
 
