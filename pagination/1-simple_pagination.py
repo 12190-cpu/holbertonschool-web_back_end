@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Module that implements simple pagination on a CSV dataset."""
 
+
 import csv
 from typing import List, Tuple
 
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """Return a tuple containing the start and end indexes for pagination. The page numbering is 1-indexed, meaning that page 1 starts at index 0."""
+    """Return the start and end indexes for a pagination request."""
     start_index = (page - 1) * page_size
     end_index = start_index + page_size
     return (start_index, end_index)
@@ -14,6 +15,7 @@ def index_range(page: int, page_size: int) -> Tuple[int, int]:
 
 class Server:
     """Server class to paginate a database of popular baby names."""
+
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self) -> None:
@@ -30,24 +32,14 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """
-        Return the requested page of the dataset.
-
-        Args:
-            page: The page number, starting from 1.
-            page_size: The number of items per page.
-
-        Returns:
-            A list of rows corresponding to the requested page.
-            If the range is out of bounds, an empty list is returned.
-        """
-        assert isinstance(page, int) and page > 0, "Page number must be a positive integer."
-        assert isinstance(page_size, int) and page_size > 0, "Page size must be a positive integer."
+        """Return the requested page of the dataset."""
+        assert isinstance(page, int) and page > 0
+        assert isinstance(page_size, int) and page_size > 0
 
         start_index, end_index = index_range(page, page_size)
         dataset = self.dataset()
 
         if start_index >= len(dataset):
             return []
-        
+
         return dataset[start_index:end_index]
