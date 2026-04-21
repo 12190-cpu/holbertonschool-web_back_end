@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
-"""Deletion-resilient hypermedia pagination."""
+"""
+Deletion-resilient hypermedia pagination.
+"""
 
 
 import csv
-from typing import Any, Dict, List, Optional
+from typing import List, Dict
 
 
 class Server:
-    """Server class to paginate a database of popular baby names."""
-
+    """
+    Server class to paginate a database of popular baby names.
+    """
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self) -> None:
-        """Initialize the Server instance."""
+        """
+        Initialize a Server instance.
+        """
         self.__dataset = None
         self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
-        """Load and cache dataset from the CSV file."""
+        """
+        Load and cache the dataset from the CSV file.
+        """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
@@ -26,7 +33,9 @@ class Server:
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
-        """Return the dataset indexed by sorting position."""
+        """
+        Return the dataset indexed by sorting position, starting at 0.
+        """
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             self.__indexed_dataset = {
@@ -34,15 +43,18 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(
-        self, index: Optional[int] = None, page_size: int = 10
-    ) -> Dict[str, Any]:
-        """Return deletion-resilient hypermedia pagination information."""
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """
+        Return a deletion-resilient hypermedia pagination dictionary.
+
+        The method returns a page of data starting at the given index and
+        skips missing indexes if rows have been deleted from the dataset.
+        """
         if index is None:
             index = 0
 
         indexed_dataset = self.indexed_dataset()
-        assert index >= 0 and index <= max(indexed_dataset.keys())
+        assert index >= 0 and index < len(indexed_dataset)
 
         data = []
         next_index = index
