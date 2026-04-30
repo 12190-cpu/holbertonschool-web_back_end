@@ -48,4 +48,4 @@ export default [
   student3,
   student4,
   student5,
-];
+]
