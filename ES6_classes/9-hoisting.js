@@ -47,5 +47,4 @@ export default [
   student2,
   student3,
   student4,
-  student5,
 ]
